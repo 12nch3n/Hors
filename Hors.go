@@ -1,6 +1,5 @@
 package main
 import (
-    "io"
     "fmt"
     "net/http"
     "log"
@@ -11,12 +10,13 @@ import (
 )
 
 func Demo(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Gorilla!\n")
+    vars := mux.Vars(r)
+    fmt.Fprintf(w, "Path: %v \n", vars["file_path"])
+    fmt.Fprintf(w, "#!/usr/bin/sh\necho \"test!\"")
 }
 
 func PathDemo(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
-    io.WriteString(w, "Gorilla!\n")
     fmt.Fprintf(w, "Path: %v \n", vars["file_path"])
 }
 
@@ -31,13 +31,12 @@ func CronRegDemo(w http.ResponseWriter, r *http.Request) {
     var cron CRON_JOB
     switch r.Method {
     case "POST":
-        io.WriteString(w, "Gorilla!\n")
         decoder := json.NewDecoder(r.Body)
         decoder.Decode(&cron)
         cron.ExecuteFile = vars["file_path"]
         break
     case "GET":
-        cron = CRON_JOB{Cron:"* */2 * * *", ExecuteFile:"demo_file.sh", Args: "arg1 arg2"}
+        cron = CRON_JOB{Cron:"*/3 * * * *", ExecuteFile:"demo_file.sh", Args: "arg1 arg2"}
         break
     }
     expr := cronexpr.MustParse(cron.Cron)
@@ -51,6 +50,9 @@ func main() {
     r.HandleFunc("/refer/{file_path:.*}", Demo).Methods("GET")
     r.HandleFunc("/exec/{file_path:.*}", PathDemo).Methods("POST")
     r.HandleFunc("/cron/{file_path:.*}", CronRegDemo)
-    r.HandleFunc("/cron/{file_path:.*}", CronRegDemo).Methods("POST")
+    r.PathPrefix("/achieves/").Handler(
+        http.StripPrefix("/achieves/",
+            http.FileServer(http.Dir("./achieves/"))))
+    http.Handle("/achieves/", r)
     log.Fatal(http.ListenAndServe(":8000", r))
 }
