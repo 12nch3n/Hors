@@ -1,6 +1,10 @@
-hash: 87a90eeefaec2a03cb129908e9bb208c3991bcd9eb91f1c3f070386ca7bfb43c
-updated: 2017-03-19T12:53:42.334407376+08:00
+hash: f6c926b18dccbd517826285e013ec25e516fccdda23f04c1cf3654fc184cccde
+updated: 2017-03-19T13:20:53.131899787+08:00
 imports:
+- name: github.com/gorhill/cronexpr
+  version: a557574d6c024ed6e36acc8b610f5f211c91568a
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: 392c28fe23e1c45ddba891b0320b3b5df220beea
 testImports: []
